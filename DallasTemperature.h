@@ -1,7 +1,7 @@
 #ifndef DallasTemperature_h
 #define DallasTemperature_h
 
-#define DALLASTEMPLIBVERSION "3.7.3"
+#define DALLASTEMPLIBVERSION "3.7.7" // To be deprecated
 
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -148,6 +148,9 @@ public:
     bool isParasitePowerMode(void);
 
     bool isConversionAvailable(const uint8_t*);
+    
+     // Is a conversion complete on the wire?
+    bool isConversionComplete(void);
 
 #if REQUIRESALARMS
 

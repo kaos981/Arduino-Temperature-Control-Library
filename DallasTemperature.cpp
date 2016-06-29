@@ -3,10 +3,6 @@
 // License as published by the Free Software Foundation; either
 // version 2.1 of the License, or (at your option) any later version.
 
-// Version 3.7.2 modified on Dec 6, 2011 to support Arduino 1.0
-// See Includes...
-// Modified by Jordan Hochenbaum
-
 #include "DallasTemperature.h"
 
 
@@ -64,10 +60,6 @@ void DallasTemperature::begin(void){
         if (validAddress(deviceAddress)){
 
             if (!parasite && readPowerSupply(deviceAddress)) parasite = true;
-
-            ScratchPad scratchPad;
-
-            readScratchPad(deviceAddress, scratchPad);
 
             bitResolution = max(bitResolution, getResolution(deviceAddress));
 
@@ -166,6 +158,7 @@ void DallasTemperature::writeScratchPad(const uint8_t* deviceAddress, const uint
     _wire->select(deviceAddress);
 
     // save the newly written values to eeprom
+    _wire->select(deviceAddress);
     _wire->write(COPYSCRATCH, parasite);
     delay(20);  // <--- added 20ms delay to allow 10ms long EEPROM write operation (as specified by datasheet)
 
@@ -304,6 +297,12 @@ bool DallasTemperature::isConversionAvailable(const uint8_t* deviceAddress){
     readScratchPad(deviceAddress, scratchPad);
     return scratchPad[0];
 
+}
+
+bool DallasTemperature::isConversionComplete()
+{
+   uint8_t b = _wire->read_bit();
+   return (b == 1);
 }
 
 // sends command for all devices on the bus to perform a temperature conversion
